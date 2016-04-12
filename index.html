@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	
+	<body onload="go()">
+		
+		<canvas id="myCanvas" width="400" height="300" style="border:1px solid #c3c3c3;">
+		Your browser does not support the HTML5 canvas tag.
+		</canvas>
+		<script>
+			
+			var q = [];
+			var h = 600;
+			var w = 800;
+			var d = [];
+			var c = document.getElementById("myCanvas");
+			var ctx = c.getContext("2d");
+			var cou = 0;
+			var col = ["#FF0000","#0000FF", "#00FF00"];
+			var index = 0;
+			function go2(){
+				if(q.length > index){
+					var pix = q[index];
+					index++;
+					if(d[pix.x][pix.y]==0){
+						var xys = [[1 , 0],[-1 , 0],[0 , 1],[0 , -1]];
+						for(var i=0;i<4;i++){
+							var newx = pix.x+xys[i][0];
+							var newy = pix.y+xys[i][1];
+							if(newx < h-1 && newx > 0 && newy > 0 && newy < w-1){
+								if(d[newx][newy]==0){
+									cou++;
+									d[pix.x][pix.y] = pix.c;
+									ctx.fillStyle = col[pix.c-1];
+									ctx.fillRect(pix.y,pix.x,1,1);
+									q.push({x : newx , y : newy, c : pix.c});
+								}
+							}
+						}
+					}
+				}
+				if(q.length > 0){
+					if(cou > 200){
+						cou = 0;
+						setTimeout(go2,1);
+					}
+					else{
+						go2();
+					}
+				}
+			}
+			function go() {
+				for(var i=0;i<h;i++){
+					d[i] = [];
+					for(var j = 0;j<w;j++){
+						d[i][j] = 0;
+					}
+				}
+				
+				
+				q.push({ x : 220, y : 30, c : 1});
+				q.push({ x : 140, y : 110, c : 2});
+				q.push({ x : 328, y : 318, c : 3});
+				go2();
+			}
+		</script>
+	</body>
+</html>
