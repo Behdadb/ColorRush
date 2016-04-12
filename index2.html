@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html>
-	
-	<body onload="go()">
+	<head>
+		<script type="text/javascript" src="binaryheap.js"></script>
+	</head>
+	<body>
 		
+		<input id="points" type="text" style="width:500px;">
+		<button onclick="go();">go</button><br/><br/>
 		<canvas id="myCanvas" width="400" height="300" style="border:1px solid #c3c3c3;">
 		Your browser does not support the HTML5 canvas tag.
 		</canvas>
-
 		<script>
 			
-			var q = [];
+			var q = new BinaryHeap(function(element){return (element.x - element.startx)*(element.x - element.startx) + (element.y - element.starty)*(element.y - element.starty)});
 			var h = 600;
 			var w = 800;
 			var d = [];
@@ -17,11 +20,10 @@
 			var ctx = c.getContext("2d");
 			var cou = 0;
 			var col = ["#FF0000","#0000FF", "#00FF00"];
-			var index = 0;
 			function go2(){
-				if(q.length > index){
-					var pix = q[index];
-					index++;
+				if(q.size() > 0){
+					var pix = q.pop();
+					//alert(pix.x+" "+pix.y+" "+pix.c);
 					if(d[pix.x][pix.y]==0){
 						var xys = [[1 , 0],[-1 , 0],[0 , 1],[0 , -1]];
 						for(var i=0;i<4;i++){
@@ -33,14 +35,14 @@
 									d[pix.x][pix.y] = pix.c;
 									ctx.fillStyle = col[pix.c-1];
 									ctx.fillRect(pix.y,pix.x,1,1);
-									q.push({x : newx , y : newy, c : pix.c});
+									q.push({x : newx , y : newy, c : pix.c , startx: pix.startx, starty : pix.starty});
 								}
 							}
 						}
 					}
 				}
-				if(q.length > 0){
-					if(cou > 1000){
+				if(q.size() > 0){
+					if(cou > 10000){
 						cou = 0;
 						setTimeout(go2,1);
 					}
@@ -57,10 +59,13 @@
 					}
 				}
 				
+				var input = document.getElementById("points").value;
+				var points = input.split(" ");
 				
-				q.push({ x : 220, y : 30, c : 1});
-				q.push({ x : 140, y : 110, c : 2});
-				q.push({ x : 328, y : 318, c : 3});
+				for(var i = 0;i<points.length;i++){
+					var cords = points[i].split(",");
+					q.push({ x : parseInt(cords[0]), y : parseInt(cords[1]), c : parseInt(cords[2]), startx: parseInt(cords[0]), starty: parseInt(cords[1])});
+				}
 				go2();
 			}
 		</script>
